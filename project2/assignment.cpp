@@ -116,17 +116,6 @@ void LSH(vector<cluster> &clusters, data &dataset, vector<hashTable> &hTables, v
   cout <<"LSH assignment completed." << endl;
 };
 
-
-
-
-
-
-
-
-
-
-
-
 //calculate and return the min distance (/2) between centroids
 double initRadius(vector<cluster> &clusters, data &dataset) {
   double minDis = -1;
