@@ -20,7 +20,9 @@
 #define ZERO 0.0
 #define MEAN 0.0
 #define STDDEV 1.0
-#define N 3                 //number of iterations in range-search
+#define N 10                 //number of iterations in range-search
+#define MCUBE 500           //M for cube
+#define PROBES 10            //#probes
 
 using namespace std;
 

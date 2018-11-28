@@ -117,6 +117,10 @@ void hashTable::printTable(void) {
     cout << "k-R vector is empty" << endl;
   else
     cout << "k-R vector is full" << endl;
+  if(this->uniqueKeys.empty())
+    cout << "uniqueKeys vector is empty" << endl;
+  else
+    cout << "uniqueKeys vector is full" << endl;
 };
 
 //return bucket with key <key>

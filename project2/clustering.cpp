@@ -60,8 +60,8 @@ int main(int argc, char* argv[]) {
   //assignment
   cout << endl << "-->step 1: assignment" << endl << endl;
   //lloyd(clusters, dataset);
-  
-  vector<hashTable> hashTables;
+
+  /*vector<hashTable> hashTables;
   int L = numberOfHashTables;
   int k = numberOfHushFunctions;
   vector<int> r = kRandomNum(k, 20);
@@ -71,9 +71,18 @@ int main(int argc, char* argv[]) {
    hashTables.push_back(hTable);
   }
   cout << "hashTables are ready!" << endl;
-  LSH(clusters, dataset, hashTables, r, L, k);
+  LSH(clusters, dataset, hashTables, r, L, k);*/
+
+  int k = floor(log2(dataset.getN()));
+  vector<int> r = kRandomNum(k, 20);
+  string algorithm = "cube";
+  hashTable hTable(dataset, r, k, algorithm);
+  //hTable.printTable();
+  //getchar();
+  cout << "hashTable is ready!" << endl;
+  cube(clusters, dataset, hTable, r, MCUBE, k, PROBES);
   for(int i=0; i<numberOfClusters; i++) {
-    cout <<i << ". " << clusters[i].getNumberOfPoints() << endl;
+    cout <<i << ". centroid: "<< clusters[i].getIndex() << " nop: " << clusters[i].getNumberOfPoints() << endl;
   }
 
 
