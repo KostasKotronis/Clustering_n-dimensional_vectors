@@ -5,7 +5,7 @@
 #include "./hFiles/cosine.h"
 
 //select randomly centroids for the clusters(uniform distribution)
-vector<int> RandomSelectionOfCentroids(int numberOfClusters, data &dataset) {
+vector<int> RandomSelectionOfCentroids(data &dataset) {
   vector<int> centroids;
   int x = 0;
   while( x < numberOfClusters) {
@@ -20,7 +20,7 @@ vector<int> RandomSelectionOfCentroids(int numberOfClusters, data &dataset) {
 };
 
 //select centroids based on k-means++
-vector<int> kMeansPlusPlus(int numberOfClusters, data &dataset) {
+vector<int> kMeansPlusPlus(data &dataset) {
   vector<int> centroids;
   int c = UniformDistNumGenerator(0, dataset.getN()-1);                                       //choose random first centroid [0, 4999]
   centroids.push_back(c);

@@ -45,7 +45,7 @@ data createDataset(string &inputFileName) {
   return d;
 };
 
-void readConfigurationFile(string &configurationFileName, int &numberOfClusters, int &numberOfHushFunctions, int &numberOfHashTables) {
+void readConfigurationFile(string &configurationFileName) {
   ifstream configurationFile;
   configurationFile.open(configurationFileName);                         //opening configuration file...
   if(configurationFile.is_open()) {                                      //if file can be open, get new values, otherwise, keep default

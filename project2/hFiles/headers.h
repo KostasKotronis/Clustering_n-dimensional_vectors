@@ -20,16 +20,13 @@
 #define ZERO 0.0
 #define MEAN 0.0
 #define STDDEV 1.0
-#define N 10                 //number of iterations in range-search
-#define MCUBE 500           //M for cube
-#define PROBES 10            //#probes
 
 using namespace std;
 
-extern int memoryOfDataset;
+extern int numberOfClusters;
+extern int numberOfHashTables;
+extern int numberOfHushFunctions;
 
-extern int memoryOfHashTables;
-
-extern int correctDistance;
-
-extern int numberOfQueries;
+extern int N;                //number of iterations in range-search
+extern int MCUBE;            //M for cube
+extern int PROBES;           //#probes

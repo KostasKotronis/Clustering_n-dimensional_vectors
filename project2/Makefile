@@ -1,7 +1,7 @@
 all: cluster
 
-cluster: clustering.o cluster.o clusterFunctions.o data.o initialization.o assignment.o euclidean.o cosine.o generalFunctions.o hashTable.o
-	g++ clustering.o cluster.o clusterFunctions.o data.o initialization.o assignment.o euclidean.o cosine.o generalFunctions.o hashTable.o -o cluster
+cluster: clustering.o cluster.o clusterFunctions.o data.o initialization.o assignment.o update.o euclidean.o cosine.o generalFunctions.o hashTable.o
+	g++ clustering.o cluster.o clusterFunctions.o data.o initialization.o assignment.o update.o euclidean.o cosine.o generalFunctions.o hashTable.o -o cluster
 
 clustering.o: clustering.cpp
 	g++ -c clustering.cpp
@@ -20,6 +20,9 @@ initialization.o: initialization.cpp
 
 assignment.o: assignment.cpp
 	g++ -c assignment.cpp
+
+update.o: update.cpp
+	g++ -c update.cpp
 
 euclidean.o: euclidean.cpp
 	g++ -c euclidean.cpp

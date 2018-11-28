@@ -26,7 +26,7 @@ void lloyd(vector<cluster> &clusters, data &dataset) {
     }
     clusters[closestCentroid].addPoint(i);                                              //add point to the cluster with min distance from centroid
   }
-  cout << "We have a Lloyd assignment right here!" << endl;
+  //cout << "We have a Lloyd assignment right here!" << endl;
 };
 
 //void LSHanswerQueries(data &dataset, vector<hashTable> &hTables, string &queryFileName, string &outputFileName, vector<int> &r, int L, int k) {

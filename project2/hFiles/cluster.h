@@ -10,13 +10,21 @@ class cluster {
     vector<int> points;
   public:
     cluster(int i, data &dataset);
+    cluster(void);
     ~cluster();
     vector<double> getCentroid(void);
+    void setCentroid(vector<double> &c);
     void printCentroid(void);
+    vector<int> getPoints(void);
+    void setPoints(vector<int> &p);
     void printPoints(void);
+    void clearPoints(void);
     void addPoint(int index);
-    int getNumberOfPoints();
+    int getNumberOfPoints(void);
     int getIndex(void);
+    void createClone(cluster &clone);
+    int equalCluster(cluster &c);
+    void updateCentroid(data &dataset);
 };
 
 #endif

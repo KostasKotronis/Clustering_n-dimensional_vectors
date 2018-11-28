@@ -4,10 +4,18 @@
 #include "./hFiles/initialization.h"
 #include "./hFiles/assignment.h"
 #include "./hFiles/hashTable.h"
+#include "./hFiles/update.h"
 
 vector<string> supportedMetrics{"euclidean", "cosine"};
 
+int numberOfClusters, numberOfHushFunctions, numberOfHashTables;
+
+int N, MCUBE, PROBES;
+
 int main(int argc, char* argv[]) {
+  N = 5;
+  MCUBE = 100;
+  PROBES = 30;
   string inputFileName, metric, configurationFileName;
   data dataset;
   bool foundInputFile = false;
@@ -32,9 +40,11 @@ int main(int argc, char* argv[]) {
     cin >> inputFileName;
   }
   dataset = createDataset(inputFileName);
-  int numberOfClusters = 13, numberOfHushFunctions = 4, numberOfHashTables = 5;
+  numberOfClusters = 13;
+  numberOfHushFunctions = 4;
+  numberOfHashTables = 5;
   if(foundConfigurationFile)                                                                                        //if configurationFile is given as an argument, store new values, otherwise keep default values
-    readConfigurationFile(configurationFileName, numberOfClusters, numberOfHushFunctions, numberOfHashTables);
+    readConfigurationFile(configurationFileName);
   if(!foundMetric) {                                                                                                //if metric is not given as an argument
     cout << "Metric wasn't given in the program's arguments. Default value is given.. (euclidean)" << endl;
     dataset.setMetric("euclidean");
@@ -50,8 +60,8 @@ int main(int argc, char* argv[]) {
   //initialization
   cout << endl << "-->step 1: initialization" << endl << endl;
   vector<int> centroids;
-  centroids = RandomSelectionOfCentroids(numberOfClusters, dataset);
-  //centroids = kMeansPlusPlus(numberOfClusters, dataset);
+  //centroids = RandomSelectionOfCentroids(dataset);
+  centroids = kMeansPlusPlus(dataset);
   vector<cluster> clusters;
   for(int i=0; i<centroids.size(); i++) {
     cluster c(centroids[i], dataset);
@@ -60,7 +70,7 @@ int main(int argc, char* argv[]) {
   //assignment
   cout << endl << "-->step 1: assignment" << endl << endl;
   //lloyd(clusters, dataset);
-
+  //lsh
   /*vector<hashTable> hashTables;
   int L = numberOfHashTables;
   int k = numberOfHushFunctions;
@@ -72,15 +82,17 @@ int main(int argc, char* argv[]) {
   }
   cout << "hashTables are ready!" << endl;
   LSH(clusters, dataset, hashTables, r, L, k);*/
-
-  int k = floor(log2(dataset.getN()));
+  //lsh-end-of
+  //cube
+  /*int k = floor(log2(dataset.getN()));
   vector<int> r = kRandomNum(k, 20);
   string algorithm = "cube";
   hashTable hTable(dataset, r, k, algorithm);
-  //hTable.printTable();
-  //getchar();
   cout << "hashTable is ready!" << endl;
-  cube(clusters, dataset, hTable, r, MCUBE, k, PROBES);
+  cube(clusters, dataset, hTable, r, MCUBE, k, PROBES);*/
+  string assignment = "lloyd";
+  kmeans(dataset, assignment, clusters);
+  //cube-end of
   for(int i=0; i<numberOfClusters; i++) {
     cout <<i << ". centroid: "<< clusters[i].getIndex() << " nop: " << clusters[i].getNumberOfPoints() << endl;
   }

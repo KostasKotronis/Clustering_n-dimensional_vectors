@@ -12,7 +12,7 @@ int binaryToDecimalConverter(vector<int>& bits);
 // cluster
 dVector parseLine(string &line);
 data createDataset(string &inputFileName);
-void readConfigurationFile(string &configurationFileName, int &numberOfClusters, int &numberOfHushFunctions, int &numberOfHashTables);
+void readConfigurationFile(string &configurationFileName);
 double UniformDistNumGenerator(double minimum, double maximum);
 
 #endif
