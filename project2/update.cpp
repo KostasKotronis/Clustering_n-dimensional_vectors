@@ -9,8 +9,10 @@
 void kmeans(data &dataset, string assignment, vector<cluster> &clusters) {
     if(assignment == "lloyd") {
       int count;
+      int zx = 50;
       do {
-        vector<cluster> previousClusters;                                            //keep previous Clusters
+        cout << zx << endl;
+        vector<cluster> previousClusters;                                       //keep previous Clusters
         for(int i=0; i<clusters.size(); i++) {
           cluster c;
           clusters[i].createClone(c);
@@ -18,48 +20,43 @@ void kmeans(data &dataset, string assignment, vector<cluster> &clusters) {
           clusters[i].clearPoints();
         }
 
+        lloyd(clusters, dataset);                                               //assign points to centroids
+
+        for(int i=0; i<clusters.size(); i++)                                    //update centroids
+          clusters[i].kMeansUpdateCentroid(dataset);
+
         count = 0;
-        for(int i=0; i<clusters.size(); i++)
+        for(int i=0; i<clusters.size(); i++)                                    //if previous_clusters == current_clusters ->terminate
           count += clusters[i].equalCluster(previousClusters[i]);
-        //cout << count << endl;
-        //getchar();
-        //cout << "b: ";
-        //previousClusters[1].printCentroid();
-        lloyd(clusters, dataset);
-
-
-        for(int i=0; i<clusters.size(); i++)
-          clusters[i].updateCentroid(dataset);
-
-        /*for(int i=0; i<clusters.size(); i++) {
-          cout << i << ". ";
-          clusters[i].printCentroid();
-        }*/
-        //cout << "a: ";
-        //clusters[1].printCentroid();
-        //getchar();
-        /*clusters[1].printPoints();
-        cout << clusters[1].getNumberOfPoints() << endl;
-        getchar();*/
-        count = 0;
-        for(int i=0; i<clusters.size(); i++)
-          count += clusters[i].equalCluster(previousClusters[i]);
-        //cout << count << endl;
-      } while( count != clusters.size() );
+        zx--;
+      } while( count != clusters.size() && zx);
     }
-    /*if(assignment == "lsh") {
+    if(assignment == "lsh") {
       vector<hashTable> hashTables;
       int L = numberOfHashTables;
       int k = numberOfHushFunctions;
       vector<int> r = kRandomNum(k, 20);
       for(int i=0; i<L; i++) {                                                                          //creates L hushTables
-      hashTable hTable(dataset, r, k, assignment);
-      hashTables.push_back(hTable);
+        hashTable hTable(dataset, r, k, assignment);
+        hashTables.push_back(hTable);
       }
       cout << "hashTables are ready!" << endl;
+      int count;
       do {
-        LSH(clusters, dataset, hashTables, r, L, k);
-      } while(0);
+        vector<cluster> previousClusters;                                       //keep previous Clusters
+        for(int i=0; i<clusters.size(); i++) {
+          cluster c;
+          clusters[i].createClone(c);
+          previousClusters.push_back(c);
+          clusters[i].clearPoints();
+        }
+        LSH(clusters, dataset, hashTables, r, L, k);                            //assign points to centroids
+        for(int i=0; i<clusters.size(); i++)                                    //update centroids
+          clusters[i].kMeansUpdateCentroid(dataset);
+        count = 0;
+        for(int i=0; i<clusters.size(); i++)                                    //if previous_clusters == current_clusters ->terminate
+          count += clusters[i].equalCluster(previousClusters[i]);
+      } while( count != clusters.size() );
     }
     if(assignment == "cube") {
 
@@ -67,10 +64,114 @@ void kmeans(data &dataset, string assignment, vector<cluster> &clusters) {
       vector<int> r = kRandomNum(k, 20);
       hashTable hTable(dataset, r, k, assignment);
       cout << "hashTable is ready!" << endl;
+      int count;
       do {
+        vector<cluster> previousClusters;                                       //keep previous Clusters
+        for(int i=0; i<clusters.size(); i++) {
+          cluster c;
+          clusters[i].createClone(c);
+          previousClusters.push_back(c);
+          clusters[i].clearPoints();
+        }
 
-        cube(clusters, dataset, hTable, r, MCUBE, k, PROBES);
+        cube(clusters, dataset, hTable, r, MCUBE, k, PROBES);                   //assign points to centroids
+        cout << "b: ";
+        clusters[1].printCentroid();
 
-      } while(0);
-    }*/
+        for(int i=0; i<clusters.size(); i++)                                    //update centroids
+          clusters[i].kMeansUpdateCentroid(dataset);
+        cout << "a: ";
+        clusters[1].printCentroid();
+        getchar();
+        count = 0;
+        for(int i=0; i<clusters.size(); i++)                                    //if previous_clusters == current_clusters ->terminate
+          count += clusters[i].equalCluster(previousClusters[i]);
+      } while( count != clusters.size() );
+    }
+}
+
+//void LSH(vector<cluster> &clusters, data &dataset, vector<hashTable> &hTables, vector<int> &r, int L, int k);
+void pam(data &dataset, string assignment, vector<cluster> &clusters) {
+    if(assignment == "lloyd") {
+      int count;
+      int zx = 50;
+      do {
+        vector<cluster> previousClusters;                                       //keep previous Clusters
+        for(int i=0; i<clusters.size(); i++) {
+          cluster c;
+          clusters[i].createClone(c);
+          previousClusters.push_back(c);
+          clusters[i].clearPoints();
+        }
+
+        lloyd(clusters, dataset);                                               //assign points to centroids
+
+        for(int i=0; i<clusters.size(); i++)                                    //update centroids
+          clusters[i].pamUpdateCentroid(dataset);
+        cout << "--------------------" << endl;
+
+        count = 0;
+        for(int i=0; i<clusters.size(); i++)                                    //if previous_clusters == current_clusters ->terminate
+          count += clusters[i].equalCluster(previousClusters[i]);
+        cout << count << endl;
+        zx--;
+      } while( count != clusters.size() && zx );
+    }
+    if(assignment == "lsh") {
+      vector<hashTable> hashTables;
+      int L = numberOfHashTables;
+      int k = numberOfHushFunctions;
+      vector<int> r = kRandomNum(k, 20);
+      for(int i=0; i<L; i++) {                                                                          //creates L hushTables
+        hashTable hTable(dataset, r, k, assignment);
+        hashTables.push_back(hTable);
+      }
+      cout << "hashTables are ready!" << endl;
+      int count;
+      do {
+        vector<cluster> previousClusters;                                       //keep previous Clusters
+        for(int i=0; i<clusters.size(); i++) {
+          cluster c;
+          clusters[i].createClone(c);
+          previousClusters.push_back(c);
+          clusters[i].clearPoints();
+        }
+        LSH(clusters, dataset, hashTables, r, L, k);                            //assign points to centroids
+        for(int i=0; i<clusters.size(); i++)                                    //update centroids
+          clusters[i].pamUpdateCentroid(dataset);
+        count = 0;
+        for(int i=0; i<clusters.size(); i++)                                    //if previous_clusters == current_clusters ->terminate
+          count += clusters[i].equalCluster(previousClusters[i]);
+      } while( count != clusters.size() );
+    }
+    if(assignment == "cube") {
+
+      int k = floor(log2(dataset.getN()));
+      vector<int> r = kRandomNum(k, 20);
+      hashTable hTable(dataset, r, k, assignment);
+      cout << "hashTable is ready!" << endl;
+      int count;
+      do {
+        vector<cluster> previousClusters;                                       //keep previous Clusters
+        for(int i=0; i<clusters.size(); i++) {
+          cluster c;
+          clusters[i].createClone(c);
+          previousClusters.push_back(c);
+          clusters[i].clearPoints();
+        }
+
+        cube(clusters, dataset, hTable, r, MCUBE, k, PROBES);                   //assign points to centroids
+        cout << "b: ";
+        clusters[1].printCentroid();
+
+        for(int i=0; i<clusters.size(); i++)                                    //update centroids
+          clusters[i].pamUpdateCentroid(dataset);
+        cout << "a: ";
+        clusters[1].printCentroid();
+        getchar();
+        count = 0;
+        for(int i=0; i<clusters.size(); i++)                                    //if previous_clusters == current_clusters ->terminate
+          count += clusters[i].equalCluster(previousClusters[i]);
+      } while( count != clusters.size() );
+    }
 }

@@ -113,7 +113,7 @@ void LSH(vector<cluster> &clusters, data &dataset, vector<hashTable> &hTables, v
   for(int c=0; c<dataset.getN(); c++) {                                                       //store point to the correct cluster
     clusters[cl[c]].addPoint(c);
   }
-  cout <<"LSH assignment completed." << endl;
+  //cout <<"LSH assignment completed." << endl;
 };
 
 
@@ -225,7 +225,7 @@ void cube(vector<cluster> &clusters, data &dataset, hashTable &hTable, vector<in
   for(int c=0; c<dataset.getN(); c++) {                                                       //store point to the correct cluster
     clusters[cl[c]].addPoint(c);
   }
-  cout <<"Cube assignment completed." << endl;
+  //cout <<"Cube assignment completed." << endl;
 };
 
 //calculate and return the min distance (/2) between centroids

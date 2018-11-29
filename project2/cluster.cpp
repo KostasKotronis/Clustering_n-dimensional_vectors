@@ -1,5 +1,7 @@
 #include "./hFiles/headers.h"
 #include "./hFiles/cluster.h"
+#include "./hFiles/euclidean.h"
+#include "./hFiles/cosine.h"
 
 /*~cluster~*/
 /****************************************/
@@ -66,13 +68,13 @@ void cluster::createClone(cluster &clone) {
 };
 
 int cluster::equalCluster(cluster &c) {
-  if( (this->centroid == c.getCentroid()) && (this->points == c.getPoints()) )
+  if( (this->centroid == c.getCentroid())  )                  //&& (this->points == c.getPoints())
     return 1;
   else
     return 0;
 };
 
-void cluster::updateCentroid(data &dataset) {
+void cluster::kMeansUpdateCentroid(data &dataset) {
   for(int i=0; i<this->centroid.size(); i++) {      // {1,2,... 204}
     double sum = 0;
     for(int j=0; j<this->points.size(); j++) {       //{index1, index2,...}
@@ -82,4 +84,41 @@ void cluster::updateCentroid(data &dataset) {
     sum = sum / (this->points.size());
     this->centroid[i] = sum;
   }
-}
+};
+
+void cluster::pamUpdateCentroid(data &dataset) {
+  int q = 0;
+  double minSum = -1;
+  int bestCentroid = -1;
+  for(int i=0; i<this->points.size(); i++) {       //{index1, index2,...}
+    double sum = 0;
+    int index1 = this->points[i];
+    for(int j=0; j<this->points.size(); j++) {
+      q++;
+      double dis;
+      int index2 = this->points[j];
+      vector<double> x1 = dataset.getdVector(index1).getCoordinates();
+      vector<double> x2 = dataset.getdVector(index2).getCoordinates();
+      if(dataset.getMetric() == "euclidean")
+        dis = euclideanDistance(x1, x2);
+      if(dataset.getMetric() == "cosine")
+        dis = cosineDistance(x1, x2);
+      sum += dis;
+    }
+    if((sum < minSum) || (minSum == -1)) {
+      minSum = sum;
+      bestCentroid = index1;
+    }
+    this->centroid.clear();
+    this->centroid = dataset.getdVector(bestCentroid).getCoordinates();
+    this->centroidIndex = bestCentroid;
+  }
+  cout << q << endl;
+};
+
+int cluster::isMember(int index) {
+  if(find(this->points.begin(), this->points.end(), index) == this->points.end())
+    return 0;
+  else
+    return 1;
+};

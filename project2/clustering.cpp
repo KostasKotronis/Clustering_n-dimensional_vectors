@@ -3,6 +3,7 @@
 #include "./hFiles/generalFunctions.h"
 #include "./hFiles/initialization.h"
 #include "./hFiles/assignment.h"
+#include "./hFiles/evaluation.h"
 #include "./hFiles/hashTable.h"
 #include "./hFiles/update.h"
 
@@ -91,7 +92,9 @@ int main(int argc, char* argv[]) {
   cout << "hashTable is ready!" << endl;
   cube(clusters, dataset, hTable, r, MCUBE, k, PROBES);*/
   string assignment = "lloyd";
-  kmeans(dataset, assignment, clusters);
+  //kmeans(dataset, assignment, clusters);
+  pam(dataset, assignment, clusters);
+  silhouette(clusters, dataset);
   //cube-end of
   for(int i=0; i<numberOfClusters; i++) {
     cout <<i << ". centroid: "<< clusters[i].getIndex() << " nop: " << clusters[i].getNumberOfPoints() << endl;

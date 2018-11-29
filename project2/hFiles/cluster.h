@@ -24,7 +24,9 @@ class cluster {
     int getIndex(void);
     void createClone(cluster &clone);
     int equalCluster(cluster &c);
-    void updateCentroid(data &dataset);
+    void kMeansUpdateCentroid(data &dataset);
+    void pamUpdateCentroid(data &dataset);
+    int isMember(int index);
 };
 
 #endif

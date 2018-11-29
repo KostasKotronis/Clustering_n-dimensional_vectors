@@ -16,7 +16,7 @@
 #include <set>
 #include <iterator>
 
-#define W 3
+#define W 2
 #define ZERO 0.0
 #define MEAN 0.0
 #define STDDEV 1.0
