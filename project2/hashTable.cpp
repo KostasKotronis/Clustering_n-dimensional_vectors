@@ -48,7 +48,7 @@ hashTable::hashTable(data &dataset, vector<int> &r, int k, string &algorithm) {
         v.push_back(NormalDistNumGenerator());
       }
       this->kVs.push_back(v);
-      double t = UniformDistNumGenerator();        //get t
+      double t = UniformDistNumGenerator();                                     //get t
       this->kTs.push_back(t);
     }
   }
@@ -61,15 +61,15 @@ hashTable::hashTable(data &dataset, vector<int> &r, int k, string &algorithm) {
       this->kRs.push_back(rr);
     }
   }
-  for(int i=0; i<dataset.getN(); i++) {                               //for every point in dataset
+  for(int i=0; i<dataset.getN(); i++) {                                         //for every point in dataset
     if( dataset.getMetric() == "euclidean") {
       int key;
       if(algorithm == "lsh") {
         dVector x = dataset.getdVector(i);
-        vector<int> g = euclideanGenerateG(x, k, this->kVs, this->kTs);     //generate a g vector
-        key = fHushFunction(g, r, dataset.getN());                      //from that g ->generate f
+        vector<int> g = euclideanGenerateG(x, k, this->kVs, this->kTs);         //generate a g vector
+        key = fHushFunction(g, r, dataset.getN());                              //from that g ->generate f
         hashNode node(i, g);
-        this->table.insert(make_pair(key, node));                           //insert the node to the table
+        this->table.insert(make_pair(key, node));                               //insert the node to the table
       }
       if(algorithm == "cube") {
         dVector x = dataset.getdVector(i);
@@ -77,19 +77,19 @@ hashTable::hashTable(data &dataset, vector<int> &r, int k, string &algorithm) {
         if(find(this->uniqueKeys.begin(), this->uniqueKeys.end(), key) == this->uniqueKeys.end())
           this->uniqueKeys.push_back(key);
         hashNode node(i);
-        this->table.insert(make_pair(key, node));                           //insert the node to the table
+        this->table.insert(make_pair(key, node));                               //insert the node to the table
       }
     }
     if( dataset.getMetric() == "cosine") {
       dVector x = dataset.getdVector(i);
-      vector<int> g = cosineGenerateG(x, k, this->kRs);       //generate a g vector
-      int key = binaryToDecimalConverter(g);                                  //from that g ->generate key
+      vector<int> g = cosineGenerateG(x, k, this->kRs);                         //generate a g vector
+      int key = binaryToDecimalConverter(g);                                    //from that g ->generate key
       if(algorithm == "cube") {
         if(find(this->uniqueKeys.begin(), this->uniqueKeys.end(), key) == this->uniqueKeys.end())
           this->uniqueKeys.push_back(key);
       }
       hashNode node(i);
-      this->table.insert(make_pair(key, node));                       //insert the node to the table
+      this->table.insert(make_pair(key, node));                                 //insert the node to the table
     }
   }
 };

@@ -7,7 +7,7 @@
 //calculate h
 int euclideanProject(dVector &p, vector<double> &v, double &t) {
   int d = p.getDimension();
-  double sp = 0;                              //scalar product v*p
+  double sp = 0;                                                                //scalar product v*p
   for(int i=0; i<d; i++)
       sp += v[i] * p.getCoordinate(i);
   int h = floor((sp+t)/W);

@@ -11,7 +11,7 @@ void lloyd(vector<cluster> &clusters, data &dataset) {
   for(int i=0; i<dataset.getN(); i++) {
     double minDis = -1;
     int closestCentroid = -1;
-    for(int j=0; j<clusters.size(); j++) {                                               //find the min distance from centroids
+    for(int j=0; j<clusters.size(); j++) {                                      //find the min distance from centroids
       double dis;
       vector<double> x1 = dataset.getdVector(i).getCoordinates();
       vector<double> x2 = clusters[j].getCentroid();
@@ -24,12 +24,12 @@ void lloyd(vector<cluster> &clusters, data &dataset) {
         closestCentroid = j;
       }
     }
-    clusters[closestCentroid].addPoint(i);                                              //add point to the cluster with min distance from centroid
+    clusters[closestCentroid].addPoint(i);                                      //add point to the cluster with min distance from centroid
   }
   //cout << "We have a Lloyd assignment right here!" << endl;
 };
 
-//void LSHanswerQueries(data &dataset, vector<hashTable> &hTables, string &queryFileName, string &outputFileName, vector<int> &r, int L, int k) {
+//assign most points to clusters via lsh algorithm ->rest :lloyd
 void LSH(vector<cluster> &clusters, data &dataset, vector<hashTable> &hTables, vector<int> &r, int L, int k) {
   double Radius = initRadius(clusters, dataset);                //calculate radius
   int cl[dataset.getN()];                                       //for every point, store the centroid
@@ -116,7 +116,7 @@ void LSH(vector<cluster> &clusters, data &dataset, vector<hashTable> &hTables, v
   //cout <<"LSH assignment completed." << endl;
 };
 
-
+//assign most points to clusters via cube algorithm ->rest :lloyd
 void cube(vector<cluster> &clusters, data &dataset, hashTable &hTable, vector<int> &r, int M, int k, int probes) {
   double Radius = initRadius(clusters, dataset);                //calculate radius
   int cl[dataset.getN()];                                       //for every point, store the centroid

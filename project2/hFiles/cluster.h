@@ -15,6 +15,7 @@ class cluster {
     vector<double> getCentroid(void);
     void setCentroid(vector<double> &c);
     void printCentroid(void);
+    int getPoint(int p);
     vector<int> getPoints(void);
     void setPoints(vector<int> &p);
     void printPoints(void);

@@ -25,7 +25,13 @@ using namespace std;
 
 extern int numberOfClusters;
 extern int numberOfHashTables;
-extern int numberOfHushFunctions;
+extern int numberOfHashFunctions;
+
+extern int maxUpdateIterations;
+
+extern string initialization;
+extern string assignment;
+extern string update;
 
 extern int N;                //number of iterations in range-search
 extern int MCUBE;            //M for cube

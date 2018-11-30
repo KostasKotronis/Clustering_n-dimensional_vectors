@@ -3,39 +3,56 @@
 #include "./hFiles/euclidean.h"
 #include "./hFiles/cosine.h"
 
-int silhouette(vector<cluster> clusters, data &dataset) {
-  double ss = 0;
-  for (int i=0; i<dataset.getN(); i++) {
-    double a=0, b=-1, s;
-    for (int j=0; j<clusters.size(); j++) {
-      int belongs = clusters[j].isMember(i);
-      if(belongs) {
-        vector<double> x1 = dataset.getdVector(i).getCoordinates();
-        vector<double> x2 = clusters[j].getCentroid();
-        if(dataset.getMetric() == "euclidean")
-          a = euclideanDistance(x1, x2);
-        if(dataset.getMetric() == "cosine")
-          a = cosineDistance(x1, x2);
-      }
-      else {
-        double bb;
-        vector<double> x1 = dataset.getdVector(i).getCoordinates();
-        vector<double> x2 = clusters[j].getCentroid();
-        if(dataset.getMetric() == "euclidean")
-          bb = euclideanDistance(x1, x2);
-        if(dataset.getMetric() == "cosine")
-          bb = cosineDistance(x1, x2);
-        if((bb < b) || (b == -1))
-            b = bb;
-      }
-    }
-    if (b > a)
-      s = (b - a) / b;
-    else
-      s = (b - a) / a;
-      cout << i << ". " << s << endl;
-    ss +=s;
+//evaluate a cluster: Compute average s (i) over all i in some cluster
+void silhouette(vector<cluster> clusters, data &dataset, string &outputFileName) {
+  double sTotal = 0;
+  ofstream outputFile;                                          //stream class to write on files
+  outputFile.open(outputFileName, std::ios::app);
+  if(!outputFile.is_open()) {                                   //in case of open crashed
+    cout << "outputFile.open crashed. Program is terminating..." << endl;
+    exit (EXIT_FAILURE);
   }
-  ss = ss /dataset.getN();
-  cout << "meso s:" << ss << endl;
-}
+  outputFile << "Silhouette: [";
+  for(int i=0; i<clusters.size(); i++) {                                        //for every cluster
+    double si = 0;
+    for(int j=0; j<clusters[i].getPoints().size(); j++) {                       //for every point in cluster
+      double a = 0;
+      int index = clusters[i].getPoint(j);
+      vector<double> x1 = dataset.getdVector(index).getCoordinates();
+      vector<double> x2 = clusters[i].getCentroid();                            //get distance of centroid (a)
+      if(dataset.getMetric() == "euclidean")
+        a = euclideanDistance(x1, x2);
+      if(dataset.getMetric() == "cosine")
+        a = cosineDistance(x1, x2);
+      double b = -1;
+      for(int z=0; z<clusters.size(); z++) {                                    //get distance of second closest centroid (b)
+        if(i != z) {
+          double bb;
+          vector<double> x1 = dataset.getdVector(index).getCoordinates();
+          vector<double> x2 = clusters[z].getCentroid();
+          if(dataset.getMetric() == "euclidean")
+            bb = euclideanDistance(x1, x2);
+          if(dataset.getMetric() == "cosine")
+            bb = cosineDistance(x1, x2);
+          if((bb < b) || (b == -1))
+              b = bb;
+        }
+      }
+      double s;                                                                 //calculate s for every point
+      if (b > a)
+        s = (b - a) / b;
+      else
+        s = (b - a) / a;
+      //cout << index << ". " << s << endl;
+      si += s;
+    }
+    si = si /clusters[i].getPoints().size();                                    //calculate average si for every cluster
+    //cout << i << ") " << si << endl;
+    outputFile << si <<",";
+    sTotal += si;
+  }
+  sTotal = sTotal /clusters.size();                                             //calculate average s for the dataset
+  outputFile << sTotal <<"]" << endl;
+  outputFile.close();
+  //cout << "stotal: " << sTotal << endl;
+};

@@ -4,6 +4,6 @@
 #include "data.h"
 #include "cluster.h"
 
-int silhouette(vector<cluster> clusters, data &dataset);
+void silhouette(vector<cluster> clusters, data &dataset, string &outputFileName);
 
 #endif

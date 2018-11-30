@@ -6,7 +6,7 @@
 //calculate h
 int cosineProject(dVector &p, vector<double> &r) {
   int d = p.getDimension();
-  double sp = 0;                              //scalar product v*p
+  double sp = 0;                                                                //scalar product v*p
   for(int i=0; i<d; i++)
       sp += r[i] * p.getCoordinate(i);
   if(sp >= 0)
@@ -31,7 +31,7 @@ double cosineDistance(vector<double> &x, vector<double> &y) {
   double sp = 0;
   double xm = 0;
   double ym = 0;
-  for(int i=0; i<x.size(); i++) {             //scalar product v*p
+  for(int i=0; i<x.size(); i++) {                                               //scalar product v*p
       xm += pow(x[i],2);
       ym += pow(y[i],2);
       sp += x[i] * y[i];
