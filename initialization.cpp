@@ -22,7 +22,9 @@ vector<int> RandomSelectionOfCentroids(data &dataset) {
 //select centroids based on k-means++
 vector<int> kMeansPlusPlus(data &dataset) {
   vector<int> centroids;
-  int c = UniformDistNumGenerator(0, dataset.getN()-1);                         //choose random first centroid [0, 4999]
+  int datasetN = dataset.getN();
+  string datasetMetric = dataset.getMetric();
+  int c = UniformDistNumGenerator(0, datasetN-1);                         //choose random first centroid [0, 4999]
   centroids.push_back(c);
   int t = 1;
   while(t < numberOfClusters) {                                                 //for every cluster, find a centroid
@@ -31,16 +33,16 @@ vector<int> kMeansPlusPlus(data &dataset) {
     double ps = 0.0;
     partialSums.push_back(ps);
     points.push_back(-1);
-    for(int i=0; i<dataset.getN(); i++) {                                       //for every point in dataset
+    for(int i=0; i<datasetN; i++) {                                       //for every point in dataset
       if(find(centroids.begin(), centroids.end(), i) == centroids.end()) {      //if this point isn't a centroid
         double minDis = -1;
+        vector<double> x1 = dataset.getdVector(i).getCoordinates();
         for(int j=0; j<centroids.size(); j++) {                                 //find the min distance from centroids
           double dis;
-          vector<double> x1 = dataset.getdVector(i).getCoordinates();
           vector<double> x2 = dataset.getdVector(centroids[j]).getCoordinates();
-          if(dataset.getMetric() == "euclidean")
+          if(datasetMetric == "euclidean")
             dis = euclideanDistance(x1, x2);
-          if(dataset.getMetric() == "cosine")
+          if(datasetMetric == "cosine")
             dis = cosineDistance(x1, x2);
           if((dis < minDis) || (minDis == -1))
             minDis = dis;
@@ -64,4 +66,4 @@ int binarySearch(vector<double> &partialSums, double x) {
   vector<double>::iterator l;
   l = lower_bound(partialSums.begin(), partialSums.end(), x);
   return l - partialSums.begin();
-}
+};

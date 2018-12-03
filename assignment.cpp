@@ -8,16 +8,18 @@
 
 //assign points to clusters via lloyd algorithm
 void lloyd(vector<cluster> &clusters, data &dataset) {
-  for(int i=0; i<dataset.getN(); i++) {
+  string datasetMetric = dataset.getMetric();
+  int datasetN = dataset.getN();
+  for(int i=0; i<datasetN; i++) {
     double minDis = -1;
     int closestCentroid = -1;
-    for(int j=0; j<clusters.size(); j++) {                                      //find the min distance from centroids
+    vector<double> x1 = dataset.getdVector(i).getCoordinates();
+    for(int j=0; j<numberOfClusters; j++) {                                     //find the min distance from centroids
       double dis;
-      vector<double> x1 = dataset.getdVector(i).getCoordinates();
       vector<double> x2 = clusters[j].getCentroid();
-      if(dataset.getMetric() == "euclidean")
+      if(datasetMetric == "euclidean")
         dis = euclideanDistance(x1, x2);
-      if(dataset.getMetric() == "cosine")
+      if(datasetMetric == "cosine")
         dis = cosineDistance(x1, x2);
       if((dis < minDis) || (minDis == -1)) {
         minDis = dis;
@@ -31,74 +33,85 @@ void lloyd(vector<cluster> &clusters, data &dataset) {
 
 //assign most points to clusters via lsh algorithm ->rest :lloyd
 void LSH(vector<cluster> &clusters, data &dataset, vector<hashTable> &hTables, vector<int> &r, int L, int k) {
-  double Radius = initRadius(clusters, dataset);                //calculate radius
-  int cl[dataset.getN()];                                       //for every point, store the centroid
-  double dis[dataset.getN()];                                   //for every point, store the distance from centroid
-  int finalized[dataset.getN()];                                //for every point, store 0 if i can change the values, 1 otherwise
-  fill_n(cl, dataset.getN(), 0);
-  fill_n(dis, dataset.getN(), -1);
-  fill_n(finalized, dataset.getN(), 0);
-  for(int n=0; n<N; n++) {                                                  //number of iterations(defined in headers.h)
-    for(int c=0; c<clusters.size(); c++) {                                      //for every centroid
+  string datasetMetric = dataset.getMetric();
+  int datasetN = dataset.getN();
+  double Radius = initRadius(clusters, datasetMetric);                                //calculate radius
+  int cl[datasetN];                                                                    //for every point, store the centroid
+  double dis[datasetN];                                                                //for every point, store the distance from centroid
+  int finalized[datasetN];                                                             //for every point, store 0 if i can change the values, 1 otherwise
+  fill_n(cl, datasetN, 0);
+  fill_n(dis, datasetN, -1);
+  fill_n(finalized, datasetN, 0);
+  int oldAssigned = -1;
+  int currentAssigned = 0;
+  int n = maxRangeSearchIterations;
+  while(n && (oldAssigned != currentAssigned)) {
+    oldAssigned = currentAssigned;
+    currentAssigned = 0;
+    for(int c=0; c<numberOfClusters; c++) {                                     //for every centroid
       int curCentroid = clusters[c].getIndex();
       dVector v = dataset.getdVector(curCentroid);                              //v = current centroid
       for(int i=0; i<L; i++) {                                                  //in every hashtable
         vector<int> g;
         int f;
-        if(dataset.getMetric() == "euclidean") {
+        if(datasetMetric == "euclidean") {
           vector<vector<double>> vs = hTables[i].getkVs();
           vector<double> ts = hTables[i].getkTs();
-          g = euclideanGenerateG(v, k, vs, ts);                                   //generate a g vector
-          f = fHushFunction(g, r, dataset.getN());                               //from that g -> generate fhushfunction
+          g = euclideanGenerateG(v, k, vs, ts);                                 //generate a g vector
+          f = fHushFunction(g, r, dataset.getN());                              //from that g -> generate fhushfunction
         }
-        else if(dataset.getMetric() == "cosine") {
+        else if(datasetMetric == "cosine") {
           vector<vector<double>> rs = hTables[i].getkRs();
           g = cosineGenerateG(v, k, rs);                                        //generate a g vector
-          f = binaryToDecimalConverter(g);                                     //from that g -> generate f(key)
+          f = binaryToDecimalConverter(g);                                      //from that g -> generate f(key)
         }
-        vector<hashNode> hn = hTables[i].returnSameBucket(f);                 //get the bucket
-        for(auto j=hn.begin(); j!=hn.end(); ++j) {                                       //if g match
-          if(finalized[j->getIndex()] == 0) {
-            double Distance;                                                             //calculate distance
-            if(dataset.getMetric() == "euclidean" && j->getG() == g) {
+        vector<hashNode> hn = hTables[i].returnSameBucket(f);                   //get the bucket
+        for(auto j=hn.begin(); j!=hn.end(); ++j) {                              //if g match
+          int jIndex = j->getIndex();
+          if(finalized[jIndex] == 0) {
+            double Distance;                                                    //calculate distance
+            if(datasetMetric == "euclidean" && j->getG() == g) {
               vector<double> x1 = v.getCoordinates();
-              vector<double> x2 = dataset.getdVector(j->getIndex()).getCoordinates();
+              vector<double> x2 = dataset.getdVector(jIndex).getCoordinates();
               Distance = euclideanDistance(x1, x2);
-              if( (Distance < Radius) && ( (dis[j->getIndex()] == -1) || (dis[j->getIndex()] > Distance) ) ) {                                                //if distance is acceptable
-                cl[j->getIndex()] = c;
-                dis[j->getIndex()] = Distance;
+              if( (Distance < Radius) && ( (dis[jIndex] == -1) || (dis[jIndex] > Distance) ) ) {                                                //if distance is acceptable
+                cl[jIndex] = c;
+                dis[jIndex] = Distance;
               }
             }
-            else if(dataset.getMetric() == "cosine") {
+            else if(datasetMetric == "cosine") {
               vector<double> x1 = v.getCoordinates();
-              vector<double> x2 = dataset.getdVector(j->getIndex()).getCoordinates();
+              vector<double> x2 = dataset.getdVector(jIndex).getCoordinates();
               Distance = cosineDistance(x1, x2);
-              if( (Distance < Radius) && ( (dis[j->getIndex()] == -1) || (dis[j->getIndex()] > Distance) ) ) {                                                //if distance is acceptable
-                cl[j->getIndex()] = c;
-                dis[j->getIndex()] = Distance;
+              if( (Distance < Radius) && ( (dis[jIndex] == -1) || (dis[jIndex] > Distance) ) ) {                                                //if distance is acceptable
+                cl[jIndex] = c;
+                dis[jIndex] = Distance;
               }
             }
           }
         }
       }
     }
-    for(int c=0; c<dataset.getN(); c++) {                                                     //set finalized = 1 for every point that we have calculate distance
-      if(dis[c] != -1)
+    for(int c=0; c<datasetN; c++) {                                                    //set finalized = 1 for every point that we have calculate distance
+      if(dis[c] != -1) {
         finalized[c] = 1;
+        currentAssigned++;
+      }
     }
-    Radius = Radius * 2;                                                                      //increase radius
+    Radius = Radius * 2;                                                        //increase radius
+    n--;
   }
-  for(int i=0; i<dataset.getN(); i++) {                                                       //we need some lloyd right here!
+  for(int i=0; i<datasetN; i++) {                                                      //we need some lloyd right here!
     double minDis = -1;
     int closestCentroid = -1;
+    vector<double> x1 = dataset.getdVector(i).getCoordinates();
     if(finalized[i] == 0) {
-      for(int j=0; j<clusters.size(); j++) {
+      for(int j=0; j<numberOfClusters; j++) {
         double dis;
-        vector<double> x1 = dataset.getdVector(i).getCoordinates();
         vector<double> x2 = clusters[j].getCentroid();
-        if(dataset.getMetric() == "euclidean")
+        if(datasetMetric == "euclidean")
           dis = euclideanDistance(x1, x2);
-        if(dataset.getMetric() == "cosine")
+        if(datasetMetric == "cosine")
           dis = cosineDistance(x1, x2);
         if((dis < minDis) || (minDis == -1)) {
           minDis = dis;
@@ -109,60 +122,66 @@ void LSH(vector<cluster> &clusters, data &dataset, vector<hashTable> &hTables, v
       dis[i] = minDis;
       finalized[i] = 1;
     }
-  }
-  for(int c=0; c<dataset.getN(); c++) {                                                       //store point to the correct cluster
-    clusters[cl[c]].addPoint(c);
+    clusters[cl[i]].addPoint(i);
   }
   //cout <<"LSH assignment completed." << endl;
 };
 
 //assign most points to clusters via cube algorithm ->rest :lloyd
 void cube(vector<cluster> &clusters, data &dataset, hashTable &hTable, vector<int> &r, int M, int k, int probes) {
-  double Radius = initRadius(clusters, dataset);                //calculate radius
-  int cl[dataset.getN()];                                       //for every point, store the centroid
-  double dis[dataset.getN()];                                   //for every point, store the distance from centroid
-  int finalized[dataset.getN()];                                //for every point, store 0 if i can change the values, 1 otherwise
-  fill_n(cl, dataset.getN(), 0);
-  fill_n(dis, dataset.getN(), -1);
-  fill_n(finalized, dataset.getN(), 0);
-  for(int n=0; n<N; n++) {                                                  //number of iterations(defined in headers.h)
-    for(int c=0; c<clusters.size(); c++) {                                      //for every centroid
+  string datasetMetric = dataset.getMetric();
+  int datasetN = dataset.getN();
+  double Radius = initRadius(clusters, datasetMetric);                                //calculate radius
+  int cl[datasetN];                                                                    //for every point, store the centroid
+  double dis[datasetN];                                                                //for every point, store the distance from centroid
+  int finalized[datasetN];                                                             //for every point, store 0 if i can change the values, 1 otherwise
+  fill_n(cl, datasetN, 0);
+  fill_n(dis, datasetN, -1);
+  fill_n(finalized, datasetN, 0);
+  int oldAssigned = -1;
+  int currentAssigned = 0;
+  int n = maxRangeSearchIterations;
+  while(n && (oldAssigned != currentAssigned)) {                               //number of iterations
+    oldAssigned = currentAssigned;
+    currentAssigned = 0;
+    for(int c=0; c<numberOfClusters; c++) {                                     //for every centroid
       int curCentroid = clusters[c].getIndex();
       dVector v = dataset.getdVector(curCentroid);                              //v = current centroid
       vector<int> g;
       int f;
-      if(dataset.getMetric() == "euclidean") {
+      if(datasetMetric == "euclidean") {
         vector<vector<double>> vs = hTable.getkVs();
         vector<double> ts = hTable.getkTs();
         g = euclideanGenerateG(v, k, vs, ts);                                   //generate a g vector
-        f = fHushFunction(g, r, dataset.getN());                               //from that g -> generate fhushfunction
+        f = fHushFunction(g, r, dataset.getN());                                //from that g -> generate fhushfunction
       }
-      else if(dataset.getMetric() == "cosine") {
+      else if(datasetMetric == "cosine") {
         vector<vector<double>> rs = hTable.getkRs();
-        g = cosineGenerateG(v, k, rs);                                        //generate a g vector
-        f = binaryToDecimalConverter(g);                                     //from that g -> generate f(key)
+        g = cosineGenerateG(v, k, rs);                                          //generate a g vector
+        f = binaryToDecimalConverter(g);                                        //from that g -> generate f(key)
       }
       int originF = f;
       int countM = M, countProbes = probes;
       vector<int> uKeys = hTable.getUniqueKeys();
       while(countM && countProbes) {
-        vector<hashNode> hn = hTable.returnSameBucket(f);         //get the bucket
+        vector<hashNode> hn = hTable.returnSameBucket(f);                       //get the bucket
         for(auto j=hn.begin(); j!=hn.end(); ++j) {
-          if(finalized[j->getIndex()] == 0) {
-            double Distance;                                          //calculate distance
-            if(dataset.getMetric() == "@euclidean") {
+          int jIndex = j->getIndex();
+          if(finalized[jIndex] == 0) {
+            double Distance;                                                    //calculate distance
+            if(datasetMetric == "euclidean") {
               vector<double> x1 = v.getCoordinates();
-              vector<double> x2 = dataset.getdVector(j->getIndex()).getCoordinates();
+              vector<double> x2 = dataset.getdVector(jIndex).getCoordinates();
               Distance = euclideanDistance(x1, x2);
             }
-            else if(dataset.getMetric() == "@cosine") {
+            else if(datasetMetric == "cosine") {
               vector<double> x1 = v.getCoordinates();
-              vector<double> x2 = dataset.getdVector(j->getIndex()).getCoordinates();
+              vector<double> x2 = dataset.getdVector(jIndex).getCoordinates();
               Distance = cosineDistance(x1, x2);
             }
-            if( (Distance < Radius) && ( (dis[j->getIndex()] == -1) || (dis[j->getIndex()] > Distance) ) ) {                                                //if distance is acceptable
-                cl[j->getIndex()] = c;
-                dis[j->getIndex()] = Distance;
+            if( (Distance < Radius) && ( (dis[jIndex] == -1) || (dis[jIndex] > Distance) ) ) {                                                //if distance is acceptable
+                cl[jIndex] = c;
+                dis[jIndex] = Distance;
               }
             countM--;
             if(countM == M)
@@ -170,15 +189,15 @@ void cube(vector<cluster> &clusters, data &dataset, hashTable &hTable, vector<in
           }
         }
         countProbes--;
-        uKeys.erase(remove(uKeys.begin(), uKeys.end(), f), uKeys.end());          //erase the current f from used keys to avoid loop
+        uKeys.erase(remove(uKeys.begin(), uKeys.end(), f), uKeys.end());        //erase the current f from used keys to avoid loop
         //hamming distance
         int minHammingDistance = 99999;
         int minKey;
         if(countProbes) {
           int minHammingDistance = 99999;
           int minKey;
-          for(auto i=uKeys.begin(); i!=uKeys.end(); ++i) {        //for every used keys, find the nearest
-            int hm = __builtin_popcount(originF^(*i));            //calculate hamming distance
+          for(auto i=uKeys.begin(); i!=uKeys.end(); ++i) {                      //for every used keys, find the nearest
+            int hm = __builtin_popcount(originF^(*i));                          //calculate hamming distance
             if(hm < minHammingDistance) {
               minHammingDistance = hm;
               minKey = *i;
@@ -188,29 +207,26 @@ void cube(vector<cluster> &clusters, data &dataset, hashTable &hTable, vector<in
         }
       }
     }
-    for(int c=0; c<dataset.getN(); c++) {                                                     //set finalized = 1 for every point that we have calculate distance
-      if(dis[c] != -1)
+    for(int c=0; c<datasetN; c++) {                                                    //set finalized = 1 for every point that we have calculate distance
+      if(dis[c] != -1) {
         finalized[c] = 1;
+        currentAssigned++;
+      }
     }
     Radius = Radius * 2;
+    n--;
   }
-  /*int count1=0;
-  for(int i=0; i<dataset.getN(); i++) {
-    if(finalized[i] == 1)
-      count1++;
-  }
-  cout << "assigned: " << count1 << endl;*/
-  for(int i=0; i<dataset.getN(); i++) {                                                       //we need some lloyd right here!
+  for(int i=0; i<datasetN; i++) {                                                      //we need some lloyd right here!
     double minDis = -1;
     int closestCentroid = -1;
-    if(finalized[i] == 0) {
-      for(int j=0; j<clusters.size(); j++) {
+    if(finalized[i] == 0) {                                                     //not finalized
+      for(int j=0; j<numberOfClusters; j++) {
         double dis;
         vector<double> x1 = dataset.getdVector(i).getCoordinates();
         vector<double> x2 = clusters[j].getCentroid();
-        if(dataset.getMetric() == "euclidean")
+        if(datasetMetric == "euclidean")
           dis = euclideanDistance(x1, x2);
-        if(dataset.getMetric() == "cosine")
+        if(datasetMetric == "cosine")
           dis = cosineDistance(x1, x2);
         if((dis < minDis) || (minDis == -1)) {
           minDis = dis;
@@ -221,25 +237,24 @@ void cube(vector<cluster> &clusters, data &dataset, hashTable &hTable, vector<in
       dis[i] = minDis;
       finalized[i] = 1;
     }
-  }
-  for(int c=0; c<dataset.getN(); c++) {                                                       //store point to the correct cluster
-    clusters[cl[c]].addPoint(c);
+    clusters[cl[i]].addPoint(i);
   }
   //cout <<"Cube assignment completed." << endl;
 };
 
 //calculate and return the min distance (/2) between centroids
-double initRadius(vector<cluster> &clusters, data &dataset) {
+double initRadius(vector<cluster> &clusters, string &datasetMetric) {
+  //string datasetMetric = dataset.getMetric();
   double minDis = -1;
-  for(int i=0; i<clusters.size(); i++) {
-    for(int j=0; j<clusters.size(); j++) {
+  for(int i=0; i<numberOfClusters; i++) {
+    vector<double> x1 = clusters[i].getCentroid();
+    for(int j=0; j<numberOfClusters; j++) {
       if(i < j) {
         double dis;
-        vector<double> x1 = clusters[i].getCentroid();
         vector<double> x2 = clusters[j].getCentroid();
-        if(dataset.getMetric() == "euclidean")
+        if(datasetMetric == "euclidean")
           dis = euclideanDistance(x1, x2);
-        if(dataset.getMetric() == "cosine")
+        if(datasetMetric == "cosine")
           dis = cosineDistance(x1, x2);
         if((dis < minDis) || (minDis == -1))
           minDis = dis;
@@ -247,4 +262,4 @@ double initRadius(vector<cluster> &clusters, data &dataset) {
     }
   }
   return minDis/2;
-}
+};

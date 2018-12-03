@@ -127,3 +127,31 @@ double data::linearSearchMinDistance(vector<double> &q) {
   }
   return minDistance;
 };
+
+double data::euclideanDis(int index1 , int index2) {
+  vector<double> x = this->dVectors[index1].getCoordinates();
+  vector<double> y = this->dVectors[index2].getCoordinates();
+  double distance = 0;
+  for(int i=0; i<x.size(); i++)
+    distance += pow(x[i]-y[i], 2);
+  distance = pow(distance, 0.5);
+  return distance;
+};
+
+double data::cosineDis(int index1 , int index2) {
+  vector<double> x = this->dVectors[index1].getCoordinates();
+  vector<double> y = this->dVectors[index2].getCoordinates();
+  double distance = 0;
+  double sp = 0;
+  double xm = 0;
+  double ym = 0;
+  for(int i=0; i<x.size(); i++) {                                               //scalar product v*p
+      xm += pow(x[i],2);
+      ym += pow(y[i],2);
+      sp += x[i] * y[i];
+  }
+  xm = pow(xm, 0.5);
+  ym = pow(ym, 0.5);
+  distance = 1 - (sp/(xm*ym));
+  return distance;
+};

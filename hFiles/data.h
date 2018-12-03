@@ -37,6 +37,8 @@ class data {
     void printData(void);
     dVector getdVector(int i);
     double linearSearchMinDistance(vector<double> &q);
+    double euclideanDis(int index1 ,int index2);
+    double cosineDis(int index1 ,int index2);
 };
 
 #endif

@@ -96,46 +96,50 @@ int cluster::equalCluster(cluster &c) {
 
 //update centroid via kmeans
 void cluster::kMeansUpdateCentroid(data &dataset) {
-  for(int i=0; i<this->centroid.size(); i++) {
+  int centroidSize = this->centroid.size();
+  int pointsSize = this->points.size();
+  for(int i=0; i<centroidSize; i++) {
     double sum = 0;
-    for(int j=0; j<this->points.size(); j++) {
+    for(int j=0; j<pointsSize; j++) {
       int index = this->points[j];
-      sum += dataset.getdVector(index).getCoordinate(i);
+      vector<double> p = dataset.getdVector(index).getCoordinates();
+      sum += p[i];
     }
-    sum = sum / (this->points.size());
+    sum = sum / pointsSize;
     this->centroid[i] = sum;
   }
 };
 
 //update centroid via pam
 void cluster::pamUpdateCentroid(data &dataset) {
-  int q = 0;
+  string datasetMetric = dataset.getMetric();
   double minSum = -1;
   int bestCentroid = -1;
-  for(int i=0; i<this->points.size(); i++) {
+  int pointsSize = this->points.size();
+  for(int i=0; i<pointsSize; i++) {
     double sum = 0;
     int index1 = this->points[i];
-    for(int j=0; j<this->points.size(); j++) {
-      q++;
+    int flag = 0;
+    int j=0;
+    while((j<pointsSize) && flag == 0) {
       double dis;
       int index2 = this->points[j];
-      vector<double> x1 = dataset.getdVector(index1).getCoordinates();
-      vector<double> x2 = dataset.getdVector(index2).getCoordinates();
-      if(dataset.getMetric() == "euclidean")
-        dis = euclideanDistance(x1, x2);
-      if(dataset.getMetric() == "cosine")
-        dis = cosineDistance(x1, x2);
+      if(datasetMetric == "euclidean")
+        dis = dataset.euclideanDis(index1, index2);
+      if(datasetMetric == "cosine")
+        dis = dataset.cosineDis(index1, index2);
       sum += dis;
+      if((sum > minSum) && (minSum != -1))
+        flag = 1;
+      j++;
     }
     if((sum < minSum) || (minSum == -1)) {
       minSum = sum;
       bestCentroid = index1;
     }
-    this->centroid.clear();
-    this->centroid = dataset.getdVector(bestCentroid).getCoordinates();
-    this->centroidIndex = bestCentroid;
   }
-  cout << q << endl;
+  this->centroid = dataset.getdVector(bestCentroid).getCoordinates();
+  this->centroidIndex = bestCentroid;
 };
 
 //return 1 if index belongs to the cluster, otherwise 0

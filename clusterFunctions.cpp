@@ -79,17 +79,23 @@ void readConfigurationFile(string &configurationFileName) {
         maxUpdateIterations = stoi(n);
         //cout << word << " " << n << endl;
       }
-      if(word == "initialization:") {                                           //initialization
-        ln >> initialization;
-        //cout << word << " " << initialization << endl;
+      if(word == "maxRangeSearchIterations:") {                                 //max number of iterations in range search
+        string n;
+        ln >> n;
+        maxRangeSearchIterations = stoi(n);
+        //cout << word << " " << n << endl;
       }
-      if(word == "assignment:") {                                               //assignment
-        ln >> assignment;
-        //cout << word << " " << assignment << endl;
+      if(word == "M_CUBE:") {                                                   //M constant for cube
+        string n;
+        ln >> n;
+        MCube= stoi(n);
+        //cout << word << " " << n << endl;
       }
-      if(word == "update:") {                                                   //update
-        ln >> update;
-        //cout << word << " " << update << endl;
+      if(word == "PROBES_CUBE:") {                                              //#probes constant for cube
+        string n;
+        ln >> n;
+        probes= stoi(n);
+        //cout << word << " " << n << endl;
       }
     }
   }

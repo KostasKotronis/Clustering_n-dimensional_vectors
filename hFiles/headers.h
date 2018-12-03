@@ -28,11 +28,11 @@ extern int numberOfHashTables;
 extern int numberOfHashFunctions;
 
 extern int maxUpdateIterations;
+extern int maxRangeSearchIterations;
 
 extern string initialization;
 extern string assignment;
 extern string update;
 
-extern int N;                //number of iterations in range-search
-extern int MCUBE;            //M for cube
-extern int PROBES;           //#probes
+extern int MCube;            //M for cube
+extern int probes;           //#probes

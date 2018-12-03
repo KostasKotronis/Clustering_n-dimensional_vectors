@@ -6,34 +6,34 @@
 //evaluate a cluster: Compute average s (i) over all i in some cluster
 void silhouette(vector<cluster> clusters, data &dataset, string &outputFileName) {
   double sTotal = 0;
-  ofstream outputFile;                                          //stream class to write on files
+  ofstream outputFile;                                                          //stream class to write on files
   outputFile.open(outputFileName, std::ios::app);
-  if(!outputFile.is_open()) {                                   //in case of open crashed
+  if(!outputFile.is_open()) {                                                   //in case of open crashed
     cout << "outputFile.open crashed. Program is terminating..." << endl;
     exit (EXIT_FAILURE);
   }
   outputFile << "Silhouette: [";
-  for(int i=0; i<clusters.size(); i++) {                                        //for every cluster
+  for(int i=0; i<numberOfClusters; i++) {                                       //for every cluster
+    int numberOfPoints = clusters[i].getNumberOfPoints();
     double si = 0;
-    for(int j=0; j<clusters[i].getPoints().size(); j++) {                       //for every point in cluster
+    vector<double> centroid = clusters[i].getCentroid();                        //get distance of centroid (a
+    for(int j=0; j<numberOfPoints; j++) {                                       //for every point in cluster
       double a = 0;
       int index = clusters[i].getPoint(j);
-      vector<double> x1 = dataset.getdVector(index).getCoordinates();
-      vector<double> x2 = clusters[i].getCentroid();                            //get distance of centroid (a)
+      vector<double> p = dataset.getdVector(index).getCoordinates();
       if(dataset.getMetric() == "euclidean")
-        a = euclideanDistance(x1, x2);
+        a = euclideanDistance(p, centroid);
       if(dataset.getMetric() == "cosine")
-        a = cosineDistance(x1, x2);
+        a = cosineDistance(p, centroid);
       double b = -1;
-      for(int z=0; z<clusters.size(); z++) {                                    //get distance of second closest centroid (b)
+      for(int z=0; z<numberOfClusters; z++) {                                   //get distance of second closest centroid (b)
         if(i != z) {
           double bb;
-          vector<double> x1 = dataset.getdVector(index).getCoordinates();
-          vector<double> x2 = clusters[z].getCentroid();
+          vector<double> centroid2 = clusters[z].getCentroid();
           if(dataset.getMetric() == "euclidean")
-            bb = euclideanDistance(x1, x2);
+            bb = euclideanDistance(p, centroid2);
           if(dataset.getMetric() == "cosine")
-            bb = cosineDistance(x1, x2);
+            bb = cosineDistance(p, centroid2);
           if((bb < b) || (b == -1))
               b = bb;
         }
@@ -44,14 +44,19 @@ void silhouette(vector<cluster> clusters, data &dataset, string &outputFileName)
       else
         s = (b - a) / a;
       //cout << index << ". " << s << endl;
-      si += s;
+      if(!isnan(s))
+        si += s;
     }
-    si = si /clusters[i].getPoints().size();                                    //calculate average si for every cluster
+    if(numberOfPoints)
+      si = si /numberOfPoints;                                                  //calculate average si for every cluster
+    else
+      si = 0;
     //cout << i << ") " << si << endl;
     outputFile << si <<",";
     sTotal += si;
   }
-  sTotal = sTotal /clusters.size();                                             //calculate average s for the dataset
+  sTotal = sTotal / numberOfClusters;                                           //calculate average s for the dataset
+  cout << "sil: " << sTotal << endl;
   outputFile << sTotal <<"]" << endl;
   outputFile.close();
   //cout << "stotal: " << sTotal << endl;
