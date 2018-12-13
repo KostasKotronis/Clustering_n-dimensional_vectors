@@ -97,6 +97,12 @@ void readConfigurationFile(string &configurationFileName) {
         probes= stoi(n);
         //cout << word << " " << n << endl;
       }
+      if(word == "W:") {                                                        //W
+        string n;
+        ln >> n;
+        W = stoi(n);
+        //cout << word << " " << n << endl;
+      }
     }
   }
 };

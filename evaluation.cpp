@@ -56,7 +56,7 @@ void silhouette(vector<cluster> clusters, data &dataset, string &outputFileName)
     sTotal += si;
   }
   sTotal = sTotal / numberOfClusters;                                           //calculate average s for the dataset
-  cout << "sil: " << sTotal << endl;
+  //cout << "sil: " << sTotal << endl;
   outputFile << sTotal <<"]" << endl;
   outputFile.close();
   //cout << "stotal: " << sTotal << endl;

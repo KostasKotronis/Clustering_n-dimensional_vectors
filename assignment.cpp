@@ -35,10 +35,10 @@ void lloyd(vector<cluster> &clusters, data &dataset) {
 void LSH(vector<cluster> &clusters, data &dataset, vector<hashTable> &hTables, vector<int> &r, int L, int k) {
   string datasetMetric = dataset.getMetric();
   int datasetN = dataset.getN();
-  double Radius = initRadius(clusters, datasetMetric);                                //calculate radius
-  int cl[datasetN];                                                                    //for every point, store the centroid
-  double dis[datasetN];                                                                //for every point, store the distance from centroid
-  int finalized[datasetN];                                                             //for every point, store 0 if i can change the values, 1 otherwise
+  double Radius = initRadius(clusters, datasetMetric);                          //calculate radius
+  int cl[datasetN];                                                             //for every point, store the centroid
+  double dis[datasetN];                                                         //for every point, store the distance from centroid
+  int finalized[datasetN];                                                      //for every point, store 0 if i can change the values, 1 otherwise
   fill_n(cl, datasetN, 0);
   fill_n(dis, datasetN, -1);
   fill_n(finalized, datasetN, 0);
@@ -92,7 +92,7 @@ void LSH(vector<cluster> &clusters, data &dataset, vector<hashTable> &hTables, v
         }
       }
     }
-    for(int c=0; c<datasetN; c++) {                                                    //set finalized = 1 for every point that we have calculate distance
+    for(int c=0; c<datasetN; c++) {                                             //set finalized = 1 for every point that we have calculate distance
       if(dis[c] != -1) {
         finalized[c] = 1;
         currentAssigned++;
@@ -101,20 +101,20 @@ void LSH(vector<cluster> &clusters, data &dataset, vector<hashTable> &hTables, v
     Radius = Radius * 2;                                                        //increase radius
     n--;
   }
-  for(int i=0; i<datasetN; i++) {                                                      //we need some lloyd right here!
+  for(int i=0; i<datasetN; i++) {                                               //we need some lloyd right here!
     double minDis = -1;
     int closestCentroid = -1;
     vector<double> x1 = dataset.getdVector(i).getCoordinates();
     if(finalized[i] == 0) {
       for(int j=0; j<numberOfClusters; j++) {
-        double dis;
+        double dist;
         vector<double> x2 = clusters[j].getCentroid();
         if(datasetMetric == "euclidean")
-          dis = euclideanDistance(x1, x2);
+          dist = euclideanDistance(x1, x2);
         if(datasetMetric == "cosine")
-          dis = cosineDistance(x1, x2);
-        if((dis < minDis) || (minDis == -1)) {
-          minDis = dis;
+          dist = cosineDistance(x1, x2);
+        if((dist < minDis) || (minDis == -1)) {
+          minDis = dist;
           closestCentroid = j;
         }
       }
@@ -131,10 +131,10 @@ void LSH(vector<cluster> &clusters, data &dataset, vector<hashTable> &hTables, v
 void cube(vector<cluster> &clusters, data &dataset, hashTable &hTable, vector<int> &r, int M, int k, int probes) {
   string datasetMetric = dataset.getMetric();
   int datasetN = dataset.getN();
-  double Radius = initRadius(clusters, datasetMetric);                                //calculate radius
-  int cl[datasetN];                                                                    //for every point, store the centroid
-  double dis[datasetN];                                                                //for every point, store the distance from centroid
-  int finalized[datasetN];                                                             //for every point, store 0 if i can change the values, 1 otherwise
+  double Radius = initRadius(clusters, datasetMetric);                          //calculate radius
+  int cl[datasetN];                                                             //for every point, store the centroid
+  double dis[datasetN];                                                         //for every point, store the distance from centroid
+  int finalized[datasetN];                                                      //for every point, store 0 if i can change the values, 1 otherwise
   fill_n(cl, datasetN, 0);
   fill_n(dis, datasetN, -1);
   fill_n(finalized, datasetN, 0);
@@ -207,7 +207,7 @@ void cube(vector<cluster> &clusters, data &dataset, hashTable &hTable, vector<in
         }
       }
     }
-    for(int c=0; c<datasetN; c++) {                                                    //set finalized = 1 for every point that we have calculate distance
+    for(int c=0; c<datasetN; c++) {                                             //set finalized = 1 for every point that we have calculate distance
       if(dis[c] != -1) {
         finalized[c] = 1;
         currentAssigned++;
@@ -216,20 +216,20 @@ void cube(vector<cluster> &clusters, data &dataset, hashTable &hTable, vector<in
     Radius = Radius * 2;
     n--;
   }
-  for(int i=0; i<datasetN; i++) {                                                      //we need some lloyd right here!
+  for(int i=0; i<datasetN; i++) {                                               //we need some lloyd right here!
     double minDis = -1;
     int closestCentroid = -1;
     if(finalized[i] == 0) {                                                     //not finalized
       for(int j=0; j<numberOfClusters; j++) {
-        double dis;
+        double dist;
         vector<double> x1 = dataset.getdVector(i).getCoordinates();
         vector<double> x2 = clusters[j].getCentroid();
         if(datasetMetric == "euclidean")
-          dis = euclideanDistance(x1, x2);
+          dist = euclideanDistance(x1, x2);
         if(datasetMetric == "cosine")
-          dis = cosineDistance(x1, x2);
-        if((dis < minDis) || (minDis == -1)) {
-          minDis = dis;
+          dist = cosineDistance(x1, x2);
+        if((dist < minDis) || (minDis == -1)) {
+          minDis = dist;
           closestCentroid = j;
         }
       }

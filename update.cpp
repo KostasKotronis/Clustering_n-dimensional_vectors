@@ -21,8 +21,8 @@ void kmeans(data &dataset, string assignment, vector<cluster> &clusters) {
       }
       lloyd(clusters, dataset);                                                 //assign points to centroids
       count = 0;
-      for(int i=0; i<numberOfClusters; i++) {                                     //if previous_clusters == current_clusters ->terminate
-        clusters[i].kMeansUpdateCentroid(dataset);                                //update centroids
+      for(int i=0; i<numberOfClusters; i++) {                                   //if previous_clusters == current_clusters ->terminate
+        clusters[i].kMeansUpdateCentroid(dataset);                              //update centroids
         count += clusters[i].equalCluster(previousClusters[i]);
       }
       mUI--;
@@ -50,8 +50,8 @@ void kmeans(data &dataset, string assignment, vector<cluster> &clusters) {
       }
       LSH(clusters, dataset, hashTables, r, L, k);                              //assign points to centroids
       count = 0;
-      for(int i=0; i<numberOfClusters; i++) {                                     //if previous_clusters == current_clusters ->terminate
-        clusters[i].kMeansUpdateCentroid(dataset);                                //update centroids
+      for(int i=0; i<numberOfClusters; i++) {                                   //if previous_clusters == current_clusters ->terminate
+        clusters[i].kMeansUpdateCentroid(dataset);                              //update centroids
         count += clusters[i].equalCluster(previousClusters[i]);
       }
       mUI--;
@@ -74,8 +74,8 @@ void kmeans(data &dataset, string assignment, vector<cluster> &clusters) {
       }
       cube(clusters, dataset, hTable, r, MCube, k, probes);                     //assign points to centroids
       count = 0;
-      for(int i=0; i<numberOfClusters; i++) {                                     //if previous_clusters == current_clusters ->terminate
-        clusters[i].kMeansUpdateCentroid(dataset);                                //update centroids
+      for(int i=0; i<numberOfClusters; i++) {                                   //if previous_clusters == current_clusters ->terminate
+        clusters[i].kMeansUpdateCentroid(dataset);                              //update centroids
         count += clusters[i].equalCluster(previousClusters[i]);
       }
       mUI--;
@@ -103,8 +103,8 @@ void pam(data &dataset, string assignment, vector<cluster> &clusters) {
       }
       lloyd(clusters, dataset);                                                 //assign points to centroids
       count = 0;
-      for(int i=0; i<numberOfClusters; i++) {                                     //if previous_clusters == current_clusters ->terminate
-        clusters[i].pamUpdateCentroid(dataset);                                   //update centroids
+      for(int i=0; i<numberOfClusters; i++) {                                   //if previous_clusters == current_clusters ->terminate
+        clusters[i].pamUpdateCentroid(dataset);                                 //update centroids
         count += clusters[i].equalCluster(previousClusters[i]);
       }
       mUI--;
@@ -132,8 +132,8 @@ void pam(data &dataset, string assignment, vector<cluster> &clusters) {
       }
       LSH(clusters, dataset, hashTables, r, L, k);                              //assign points to centroids
       count = 0;
-      for(int i=0; i<numberOfClusters; i++) {                                     //if previous_clusters == current_clusters ->terminate
-        clusters[i].pamUpdateCentroid(dataset);                                   //update centroids
+      for(int i=0; i<numberOfClusters; i++) {                                   //if previous_clusters == current_clusters ->terminate
+        clusters[i].pamUpdateCentroid(dataset);                                 //update centroids
         count += clusters[i].equalCluster(previousClusters[i]);
       }
       mUI--;
@@ -157,8 +157,8 @@ void pam(data &dataset, string assignment, vector<cluster> &clusters) {
       }
       cube(clusters, dataset, hTable, r, MCube, k, probes);                     //assign points to centroids
       count = 0;
-      for(int i=0; i<numberOfClusters; i++) {                                     //if previous_clusters == current_clusters ->terminate
-        clusters[i].pamUpdateCentroid(dataset);                                   //update centroids
+      for(int i=0; i<numberOfClusters; i++) {                                   //if previous_clusters == current_clusters ->terminate
+        clusters[i].pamUpdateCentroid(dataset);                                 //update centroids
         count += clusters[i].equalCluster(previousClusters[i]);
       }
       mUI--;

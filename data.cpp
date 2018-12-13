@@ -102,6 +102,10 @@ dVector data::getdVector(int i) {
   return this->dVectors[i];
 };
 
+int data::getdVectorId(int i) {
+  return this->dVectors[i].getId();
+};
+
 //linear search to find real nn
 double data::linearSearchMinDistance(vector<double> &q) {
   double minDistance = -1;

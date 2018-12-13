@@ -16,7 +16,6 @@
 #include <set>
 #include <iterator>
 
-#define W 2
 #define ZERO 0.0
 #define MEAN 0.0
 #define STDDEV 1.0
@@ -34,5 +33,6 @@ extern string initialization;
 extern string assignment;
 extern string update;
 
+extern int W;
 extern int MCube;            //M for cube
 extern int probes;           //#probes

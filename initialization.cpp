@@ -24,7 +24,7 @@ vector<int> kMeansPlusPlus(data &dataset) {
   vector<int> centroids;
   int datasetN = dataset.getN();
   string datasetMetric = dataset.getMetric();
-  int c = UniformDistNumGenerator(0, datasetN-1);                         //choose random first centroid [0, 4999]
+  int c = UniformDistNumGenerator(0, datasetN-1);                               //choose random first centroid [0, 4999]
   centroids.push_back(c);
   int t = 1;
   while(t < numberOfClusters) {                                                 //for every cluster, find a centroid
@@ -33,7 +33,7 @@ vector<int> kMeansPlusPlus(data &dataset) {
     double ps = 0.0;
     partialSums.push_back(ps);
     points.push_back(-1);
-    for(int i=0; i<datasetN; i++) {                                       //for every point in dataset
+    for(int i=0; i<datasetN; i++) {                                             //for every point in dataset
       if(find(centroids.begin(), centroids.end(), i) == centroids.end()) {      //if this point isn't a centroid
         double minDis = -1;
         vector<double> x1 = dataset.getdVector(i).getCoordinates();

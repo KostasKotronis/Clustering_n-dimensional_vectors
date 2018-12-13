@@ -12,7 +12,7 @@ vector<string> supportedMetrics{"euclidean", "cosine"};
 int numberOfClusters, numberOfHashFunctions, numberOfHashTables;
 int maxUpdateIterations, maxRangeSearchIterations;
 string initialization, assignment, update;
-int MCube, probes;
+int MCube, probes, W;
 
 int main(int argc, char* argv[]) {
   clock_t start = clock();
@@ -26,6 +26,7 @@ int main(int argc, char* argv[]) {
   update = "kmeans";
   MCube = 100;
   probes = 30;
+  W = 2;
   int complete  = 0;
   int everyCombination  = 0;
   string inputFileName, outputFileName, metric, configurationFileName;
@@ -146,13 +147,13 @@ int main(int argc, char* argv[]) {
               outputFile << ")}" << endl;
             }
             else
-              outputFile << "CLUSTER-" << i << " {size: " << clusters[i].getNumberOfPoints() << ", centroid: " << clusters[i].getIndex() << "}" << endl;
+              outputFile << "CLUSTER-" << i << " {size: " << clusters[i].getNumberOfPoints() << ", centroid: " << dataset.getdVectorId(clusters[i].getIndex()) << "}" << endl;
           }
           outputFile.close();
           silhouette(clusters, dataset, outputFileName);
           if(complete) {
             outputFile.open(outputFileName, std::ios::app);
-            if(!outputFile.is_open()) {                                           //in case of open crashed
+            if(!outputFile.is_open()) {                                         //in case of open crashed
               cout << "outputFile.open crashed. Program is terminating..." << endl;
               exit (EXIT_FAILURE);
             }
@@ -160,13 +161,14 @@ int main(int argc, char* argv[]) {
               outputFile << "CLUSTER-" << i << " {";
               vector<int> p = clusters[i].getPoints();
               for(int j=0; j<clusters[i].getPoints().size(); j++)
-                outputFile << p[j] << " ";
+                outputFile << dataset.getdVectorId(p[j]) << " ";
               outputFile << "}" << endl;
             }
             outputFile.close();
           }
+          cout << "   evaluation completed!" << endl;
           clock_t f = clock();
-          cout << "time: " << (unsigned int)(f - s) / (double CLOCKS_PER_SEC) <<" (s)" << endl;
+          //cout << "time: " << (unsigned int)(f - s) / (double CLOCKS_PER_SEC) <<" (s)" << endl;
         }
       }
     }
@@ -203,7 +205,7 @@ int main(int argc, char* argv[]) {
     cout << "   assignment & update completed!" << endl;
 
     outputFile.open(outputFileName, std::ios::app);
-    if(!outputFile.is_open()) {                                           //in case of open crashed
+    if(!outputFile.is_open()) {                                                 //in case of open crashed
       cout << "outputFile.open crashed. Program is terminating..." << endl;
       exit (EXIT_FAILURE);
     }
@@ -218,13 +220,13 @@ int main(int argc, char* argv[]) {
         outputFile << ")}" << endl;
       }
       else
-        outputFile << "CLUSTER-" << i << " {size: " << clusters[i].getNumberOfPoints() << ", centroid: " << clusters[i].getIndex() << "}" << endl;
+        outputFile << "CLUSTER-" << i << " {size: " << clusters[i].getNumberOfPoints() << ", centroid: " << dataset.getdVectorId(clusters[i].getIndex()) << "}" << endl;
     }
     outputFile.close();
     silhouette(clusters, dataset, outputFileName);
     if(complete) {
       outputFile.open(outputFileName, std::ios::app);
-      if(!outputFile.is_open()) {                                           //in case of open crashed
+      if(!outputFile.is_open()) {                                               //in case of open crashed
         cout << "outputFile.open crashed. Program is terminating..." << endl;
         exit (EXIT_FAILURE);
       }
@@ -232,16 +234,17 @@ int main(int argc, char* argv[]) {
         outputFile << "CLUSTER-" << i << " {";
         vector<int> p = clusters[i].getPoints();
         for(int j=0; j<clusters[i].getPoints().size(); j++)
-          outputFile << p[j] << " ";
+          outputFile << dataset.getdVectorId(p[j]) << " ";
         outputFile << "}" << endl;
       }
       outputFile.close();
     }
+    cout << "   evaluation completed!" << endl;
     clock_t f = clock();
-    cout << "time: " << (unsigned int)(f - s) / (double CLOCKS_PER_SEC) <<" (s)" << endl;
+    //cout << "time: " << (unsigned int)(f - s) / (double CLOCKS_PER_SEC) <<" (s)" << endl;
   }
   clock_t fin = clock();
-  cout << "total time: " << (unsigned int)(fin - start) / (double CLOCKS_PER_SEC) <<" (s)" << endl;
+  //cout << "total time: " << (unsigned int)(fin - start) / (double CLOCKS_PER_SEC) <<" (s)" << endl;
   cout << "Program is terminating... C ya!" << endl;
   return 0;
 };
