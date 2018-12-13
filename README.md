@@ -1,4 +1,4 @@
-# project-ergasia2
+# Clustering n-dimensional vectors
 
 Implementation of algorithms for clustering n-dimensional vectors in C++ and validation of consistency within clusters with Sihouette's method. 
   
